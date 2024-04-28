@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:property name="chassis_length" value="0.42"/>
+  <xacro:property name="chassis_width" value="0.28"/>
+  <xacro:property name="chassis_height" value="0.108"/>
+  <xacro:property name="chassis_mass" value="20.0"/>
+
+  <xacro:property name="wheel_radius" value="0.075"/>
+  <xacro:property name="wheel_width" value="0.05"/>
+  <xacro:property name="wheel_mass" value="1.0"/>
+
+  <xacro:property name="lidar_height" value="0.0575"/>
+
+  <xacro:property name="wheelbase" value="0.3185"/>
+  <xacro:property name="track" value="0.38"/>
+</robot>

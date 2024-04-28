@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="roboost_robot">
+    <!-- Include properties -->
+    <xacro:include filename="$(find roboost)/descriptions/properties/properties.xacro"/>
+
+    <!-- Include chassis -->
+    <xacro:include filename="$(find roboost)/descriptions/components/chassis.xacro"/>
+
+    <!-- Include wheels -->
+    <xacro:include filename="$(find roboost)/descriptions/components/wheels/mecanum_wheel_left.xacro"/>
+    <xacro:include filename="$(find roboost)/descriptions/components/wheels/mecanum_wheel_right.xacro"/>
+
+    <!-- Include sensors -->
+    <xacro:include filename="$(find roboost)/descriptions/components/sensors/lidar.xacro"/>
+    <xacro:include filename="$(find roboost)/descriptions/components/sensors/camera.xacro"/>
+    <xacro:include filename="$(find roboost)/descriptions/components/sensors/imu.xacro"/>
+
+    <!-- Base link -->
+    <link name="base_link"/>
+
+    <!-- Base Footprint link-->
+    <link name="base_footprint"/>
+
+    <joint name="base_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="base_footprint"/>
+        <origin xyz="0.0 0.0 -${wheel_radius}" rpy="0.0 0.0 0.0"/>
+    </joint>
+    
+    <!-- Chassis -->
+    <xacro:chassis name="chassis" parent="base_link">
+        <origin xyz="0.0 0.0 ${wheel_radius}" rpy="0.0 0.0 0.0"/>
+    </xacro:chassis>
+
+    <!-- Wheels -->
+    <xacro:mecanum_wheel_left name="wheel_front_left" parent="chassis_link" mesh="file://$(find roboost)/meshes/Mecanum-Wheel-Left.STL">
+        <origin xyz="${wheelbase / 2} ${track / 2} 0.0" rpy="${pi * 3 / 2} 0.0 0.0"/>
+    </xacro:mecanum_wheel_left>
+    
+    <xacro:mecanum_wheel_right name="wheel_front_right" parent="chassis_link" mesh="file://$(find roboost)/meshes/Mecanum-Wheel-Right.STL">
+        <origin xyz="${wheelbase / 2} -${track / 2} 0.0" rpy="${pi / 2} 0.0 0.0"/>
+    </xacro:mecanum_wheel_right>
+
+    <xacro:mecanum_wheel_left name="wheel_back_left" parent="chassis_link" mesh="file://$(find roboost)/meshes/Mecanum-Wheel-Left.STL">
+        <origin xyz="-${wheelbase / 2} ${track / 2} 0.0" rpy="${pi * 3 / 2} 0.0 0.0"/>
+    </xacro:mecanum_wheel_left>
+
+    <xacro:mecanum_wheel_right name="wheel_back_right" parent="chassis_link" mesh="file://$(find roboost)/meshes/Mecanum-Wheel-Right.STL">
+        <origin xyz="-${wheelbase / 2} -${track / 2} 0.0" rpy="${pi / 2} 0.0 0.0"/>
+    </xacro:mecanum_wheel_right>
+
+    <!-- Sensors -->
+    <xacro:lidar name="lidar" parent="chassis_link">
+        <origin xyz="0.057 0.045 ${chassis_height + lidar_height}" rpy="${pi} 0.0 ${pi * 3/ 2}"/>
+    </xacro:lidar>
+
+    <xacro:camera name="camera" parent="chassis_link">
+        <origin xyz="${chassis_length / 2 - 0.03} -0.08 ${chassis_height - 0.035}" rpy="0.0 0.0 0.0"/>
+    </xacro:camera>
+
+    <xacro:imu name="imu" parent="chassis_link">
+        <origin xyz="${chassis_length / 2 - 0.05} -0.08 ${chassis_height}" rpy="0.0 0.0 0.0"/>
+    </xacro:imu>
+
+
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_planar_move.so">
+            <commandTopic>cmd_vel</commandTopic>
+            <odometryTopic>odom</odometryTopic>
+            <odometryFrame>odom</odometryFrame>
+            <robotBaseFrame>base_link</robotBaseFrame>
+            <publishOdom>true</publishOdom>
+            <publishOdomTF>true</publishOdomTF>
+            <publishWheelTF>true</publishWheelTF>
+            <publishTf>true</publishTf>
+            <publishWheelJointState>true</publishWheelJointState>
+        </plugin>
+    </gazebo>
+</robot>

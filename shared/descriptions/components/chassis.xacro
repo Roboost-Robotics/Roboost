@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find roboost)/robot_descriptions/properties/properties.xacro"/>
+  <xacro:include filename="$(find roboost)/robot_descriptions/materials/materials.xacro"/>
+  <xacro:include filename="$(find roboost)/robot_descriptions/macros/inertia_macros.xacro"/>
+
+  <!-- Chassis macro definition -->
+  <xacro:macro name="chassis" params="name parent *joint_origin">
+    <link name="${name}_link">
+      <visual>
+        <geometry>
+          <mesh filename="file://$(find roboost)/meshes/Chassis.STL" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.0" rpy="${pi / 2} 0.0 0.0"/>
+        <material name="orange"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+      </collision>
+      <inertial>
+        <mass value="${chassis_mass}"/>
+        <origin xyz="0.0 0.0 ${chassis_height / 2}" rpy="0.0 0.0 0.0"/>
+        <xacro:box_inertia mass="${chassis_mass}" x="${chassis_length}" y="${chassis_width}" z="${chassis_height}"/>
+      </inertial>
+    </link>
+
+    <!-- Define a fixed joint to connect the chassis to the parent link -->
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+      <xacro:insert_block name="joint_origin"/>
+    </joint>
+
+    <gazebo reference="${name}_link">
+        <material>Gazebo/Orange</material>
+    </gazebo>
+  </xacro:macro>
+</robot>
